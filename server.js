@@ -35,15 +35,21 @@ app.get("/api/notes", function (req, res) {
 readFileAsync("./db/db.json", "utf8").then (data => {
   const notesJSON = JSON.parse(data)
   // parse when reading, stringify while writing
-    // if (err) throw err;
     console.log(notesJSON)
     res.json(notesJSON)
   })
 });
 
 app.post("/api/notes", function (req, res) {
-  dbjson.push(req.body)
-  res.json(newNote)
+  let newNote = req.body
+  readFileAsync("./db/db.json", "utf8").then (data =>{
+    const notesJSON = JSON.parse(data);
+    notesJSON.push(newNote);
+
+    writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
+      res.json(newNote);
+    })
+  })
 });
 
 app.delete("/api/notes/:id", function (req, res) {
