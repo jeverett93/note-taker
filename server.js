@@ -4,6 +4,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const util = require("util");
+const uuid = require("uuid");
 
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -42,6 +43,8 @@ readFileAsync("./db/db.json", "utf8").then (data => {
 
 app.post("/api/notes", function (req, res) {
   let newNote = req.body
+  let id = uuid.v4
+  newNote.id = `${id}`
   readFileAsync("./db/db.json", "utf8").then (data =>{
     const notesJSON = JSON.parse(data);
     notesJSON.push(newNote);
