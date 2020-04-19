@@ -10,7 +10,7 @@ const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 
 // importing db.json
-const dbjson = require('./db/db.json');
+// const dbjson = require('./db/db.json');
 
 // Sets up the Express App
 // =============================================================
@@ -22,11 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// holds user data
-let notes = [];
-
-// Basic route that sends the user first to the Index Page
-
+// Route that sends the user to the Notes Page
 app.get("/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "notes.html"));
 });
@@ -34,7 +30,7 @@ app.get("/notes", function (req, res) {
 app.get("/api/notes", function (req, res) {
   // read db json file using fs and then:
 readFileAsync("./db/db.json", "utf8").then (data => {
-  const notesJSON = JSON.parse(data)
+  let notesJSON = JSON.parse(data)
   // parse when reading, stringify while writing
     console.log(notesJSON)
     res.json(notesJSON)
@@ -46,7 +42,7 @@ app.post("/api/notes", function (req, res) {
   let id = uuid.v4
   newNote.id = `${id}`
   readFileAsync("./db/db.json", "utf8").then (data =>{
-    const notesJSON = JSON.parse(data);
+    let notesJSON = JSON.parse(data);
     notesJSON.push(newNote);
 
     writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
@@ -56,7 +52,18 @@ app.post("/api/notes", function (req, res) {
 });
 
 app.delete("/api/notes/:id", function (req, res) {
-  dbjson.delete(req.body)
+  // let deleteNote = req.params.id
+  // let filteredArray = [];
+  readFileAsync("./db/db.json", "utf8").then (data =>{
+    let notesJSON = JSON.parse(data);
+    let remainNotes = notesJSON.filter(note => note.id !== req.params.id)
+    notesJSON = remainNotes;
+
+    writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
+      res.json(notesJSON);
+    })
+  });
+  // notesJSON = filteredArray;
 });
 
 app.get("*", function (req, res) {
