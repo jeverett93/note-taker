@@ -6,11 +6,9 @@ const fs = require("fs");
 const util = require("util");
 const uuid = require("uuid");
 
+// Methods to allow promisify async functions to be used
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
-
-// importing db.json
-// const dbjson = require('./db/db.json');
 
 // Sets up the Express App
 // =============================================================
@@ -27,17 +25,16 @@ app.get("/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "notes.html"));
 });
 
+// Reads db json file and returns all saved notes as json
 app.get("/api/notes", function (req, res) {
-  // read db json file using fs and then:
 readFileAsync("./db/db.json", "utf8")
 .then (data => {
   let notesJSON = JSON.parse(data)
-  // parse when reading, stringify while writing
-    console.log(notesJSON)
     res.json(notesJSON)
   })
 });
 
+// Receive new notes to save and adds it to the db.json file, and then return the new note to the user.
 app.post("/api/notes", function (req, res) {
   let newNote = req.body
   let id = uuid.v4()
@@ -45,35 +42,30 @@ app.post("/api/notes", function (req, res) {
   readFileAsync("./db/db.json", "utf8").then (data =>{
     let notesJSON = JSON.parse(data);
     notesJSON.push(newNote);
-
     writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
       res.json(newNote);
     });
   });
 });
 
+// Deletes selected note from the db json file and rewrites/return remaining notes to user.
 app.delete("/api/notes/:id", function (req, res) {
-  // let deleteNote = req.params.id
-  // let filteredArray = [];
   readFileAsync("./db/db.json", "utf8").then (data =>{
     let notesJSON = JSON.parse(data);
     let remainNotes = notesJSON.filter(note => note.id !== req.params.id);
     notesJSON = remainNotes;
-
     writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
       res.json(notesJSON);
     });
   });
 });
 
+// Route that sends user to home/index page
 app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-
-
 // Starts the server to begin listening
-// =============================================================
 app.listen(PORT, function () {
   console.log("App listening on PORT " + PORT);
 });
