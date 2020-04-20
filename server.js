@@ -29,39 +29,40 @@ app.get("/notes", function (req, res) {
 
 app.get("/api/notes", function (req, res) {
   // read db json file using fs and then:
-readFileAsync("./db/db.json", "utf8").then (data => {
-  let notesJSON = JSON.parse(data)
-  // parse when reading, stringify while writing
-    console.log(notesJSON)
-    res.json(notesJSON)
-  })
+  readFileAsync("./db/db.json", "utf8")
+    .then((data) => {
+      let notesJSON = JSON.parse(data);
+      // parse when reading, stringify while writing
+      res.json(notesJSON);
+    })
+    .catch(console.error);
 });
 
 app.post("/api/notes", function (req, res) {
-  let newNote = req.body
-  let id = uuid.v4
-  newNote.id = `${id}`
-  readFileAsync("./db/db.json", "utf8").then (data =>{
+  let newNote = req.body;
+  let id = uuid.v4();
+  newNote.id = id;
+  readFileAsync("./db/db.json", "utf8").then((data) => {
     let notesJSON = JSON.parse(data);
     notesJSON.push(newNote);
 
     writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
       res.json(newNote);
-    })
-  })
+    });
+  });
 });
 
 app.delete("/api/notes/:id", function (req, res) {
   // let deleteNote = req.params.id
   // let filteredArray = [];
-  readFileAsync("./db/db.json", "utf8").then (data =>{
+  readFileAsync("./db/db.json", "utf8").then((data) => {
     let notesJSON = JSON.parse(data);
-    let remainNotes = notesJSON.filter(note => note.id !== req.params.id)
+    let remainNotes = notesJSON.filter((note) => note.id !== req.params.id);
     notesJSON = remainNotes;
 
     writeFileAsync("./db/db.json", JSON.stringify(notesJSON)).then(() => {
       res.json(notesJSON);
-    })
+    });
   });
   // notesJSON = filteredArray;
 });
@@ -69,8 +70,6 @@ app.delete("/api/notes/:id", function (req, res) {
 app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
-
 
 // Starts the server to begin listening
 // =============================================================
