@@ -9,7 +9,7 @@
 ## <h2 id="description">Description</h2>
 This is an application that can be used to write, save, and delete notes.
 
-![Image of Application](public\assets\images\appdemo.gif)
+![Image of Application](public/assets/images/appdemo.gif)
 
 ## Table of Contents
 * <a href="#link">Live Link</a> 
