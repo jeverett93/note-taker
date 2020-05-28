@@ -27,18 +27,18 @@ app.get("/notes", function (req, res) {
 
 // Reads db json file and returns all saved notes as json
 app.get("/api/notes", function (req, res) {
-readFileAsync("./db/db.json", "utf8")
-.then (data => {
-  let notesJSON = JSON.parse(data)
-    res.json(notesJSON)
-  })
+  readFileAsync("./db/db.json", "utf8")
+    .then (data => {
+      let notesJSON = JSON.parse(data);
+      res.json(notesJSON);
+    });
 });
 
 // Receive new notes to save and adds it to the db.json file, and then return the new note to the user.
 app.post("/api/notes", function (req, res) {
-  let newNote = req.body
-  let id = uuid.v4()
-  newNote.id = id
+  let newNote = req.body;
+  let id = uuid.v4();
+  newNote.id = id;
   readFileAsync("./db/db.json", "utf8").then (data =>{
     let notesJSON = JSON.parse(data);
     notesJSON.push(newNote);

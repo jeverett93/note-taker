@@ -4,7 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint",
+    "lint": "eslint --quiet .",
+    "fix": "eslint --fix .",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -12,5 +15,8 @@
     "express": "^4.16.4",
     "path": "^0.12.7",
     "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.1.0"
   }
 }
